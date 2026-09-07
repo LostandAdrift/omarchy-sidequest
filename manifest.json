@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "io.github.lostandadrift.sidequest",
+  "name": "Sidequest",
+  "version": "0.1.0",
+  "author": "LostandAdrift",
+  "description": "A JRPG quest journal for your Steam library. Remember your next move, roll your backlog, and get back in the game.",
+  "license": "MIT",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Sidequest.qml"
+  },
+  "barWidget": {
+    "displayName": "Sidequest",
+    "category": "Productivity",
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "reducedMotion": false
+    },
+    "schema": [
+      {
+        "key": "reducedMotion",
+        "type": "boolean",
+        "label": "Reduce motion"
+      }
+    ]
+  }
+}
