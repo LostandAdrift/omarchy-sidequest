@@ -79,6 +79,15 @@ FocusScope {
         if (!present)
             selectGame(filtered.length ? filtered[0].id : "");
     }
+    function ensureSelectionVisible() {
+        var index = filtered.findIndex(function (g) {
+            return g.id === root.selectedId;
+        });
+        if (index >= 0) {
+            gamesList.forceLayout();
+            gamesList.positionViewAtIndex(index, ListView.Contain);
+        }
+    }
     function moveSelection(delta) {
         if (!filtered.length)
             return;
@@ -112,11 +121,7 @@ FocusScope {
         if (!id)
             return;
         selectGame(id);
-        var index = filtered.findIndex(function (g) {
-            return g.id === id;
-        });
-        if (index >= 0)
-            gamesList.positionViewAtIndex(index, ListView.Contain);
+        Qt.callLater(ensureSelectionVisible);
     }
     function resetView() {
         rememberDraft();
@@ -132,7 +137,10 @@ FocusScope {
         mode = "all";
         reconcile();
     }
-    onFilteredChanged: reconcile()
+    onFilteredChanged: {
+        reconcile();
+        Qt.callLater(ensureSelectionVisible);
+    }
     onDemoChanged: resetView()
     onActiveChanged: if (!active) {
         rollTimer.stop();

@@ -6,7 +6,7 @@ Tested on September 7, 2026 with Omarchy 4.0.2, Hyprland 0.56.2, Quickshell 0.3.
 
 - 41 Python cases: bounded Valve KeyValues parsing; multiple/legacy/offline libraries; bad manifests; runtime filtering; local artwork fallback; corrupt/private/atomic state; concurrent writes; notes; reversible hiding; exact launch arguments; a real process handoff to an isolated fake Steam executable; shuffle bag behavior and injection rejection.
 - Five JavaScript cases: search ranking, fuzzy abbreviations, filters, honest timestamps, and fictional fixture isolation.
-- 21 QtQuick cases (23 results including setup/cleanup): keyboard actions, input focus, note save, draft preservation across uninstall/reinstall, separate demo/live drafts, Unicode character limits, literal markup, hidden/empty/error states, compact layout, help, and stopped animation when closed. Runtime QML warnings fail these tests. `qmllint` reports no warnings for the portable view and components.
+- 22 QtQuick cases (24 results including setup/cleanup): keyboard actions, input focus, note save, selected-row visibility after saving, draft preservation across uninstall/reinstall, separate demo/live drafts, Unicode character limits, literal markup, hidden/empty/error states, compact layout, help, and stopped animation when closed. Runtime QML warnings fail these tests. `qmllint` reports no warnings for the portable view and components.
 - The real Quickshell/Python bridge passed two sequential scans and concurrent-request rejection, with no worker left running.
 - Isolated bridge fault tests passed malformed JSON, exit-code failure, and the ten-second stall deadline. Each recovered on the next request without overlapping helpers.
 

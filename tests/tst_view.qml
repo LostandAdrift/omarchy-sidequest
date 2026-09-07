@@ -256,4 +256,14 @@ TestCase {
         compare(Model.characterCount(note.text), 600);
         verify(note.text.endsWith("🎮"));
     }
+    function test_selected_game_stays_visible_after_save_refresh() {
+        var id = subject.filtered[6].id, list = findChild(subject, "gameList");
+        subject.showPick(id);
+        wait(30);
+        verify(list.contentY > 0);
+        subject.library = Model.demoLibrary();
+        wait(30);
+        compare(subject.selectedId, id);
+        verify(list.contentY > 0, "Model replacement must preserve the selected row's visibility");
+    }
 }
