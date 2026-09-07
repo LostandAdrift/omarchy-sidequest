@@ -8,6 +8,8 @@ Leave future you a quest note. When you cannot pick a game, let the shuffle bag 
 
 ![Sidequest with original fictional demo games](preview.png)
 
+[Watch the 10-second demo](docs/assets/sidequest.webm)
+
 - **Continue with context.** Keep a next-session note beside each game, then launch it in Steam.
 - **Roll a quest.** Draw from the current search or filter. Every eligible game gets a turn before the bag resets. Rolling never launches a game.
 - **Make your own quest pools.** Favourites, games with notes, and your own Quick session / Deep dive / Party time tags.
@@ -80,10 +82,11 @@ Removal leaves your private journal intact. To erase your notes too, delete the 
 ```sh
 bash scripts/check.sh
 bash scripts/check-store.sh
+bash scripts/check-failure.sh stall
 bash scripts/render.sh --output /tmp/sidequest.png --game 700001
 python3 scripts/benchmark.py --games 1000 --runs 20
 ```
 
-Tests use Python's standard `unittest`, Node's built-in test runner, and Qt's `qmltestrunner`. `SIDEQUEST_QT_BIN` can point to the Qt tools directory. The store check uses a temporary journal and reads the local Steam index without opening games. Benchmarks use only synthetic libraries. See [architecture](docs/architecture.md) and [validation](docs/validation.md).
+Tests use Python's standard `unittest`, Node's built-in test runner, and Qt's `qmltestrunner`. `SIDEQUEST_QT_BIN` can point to the Qt tools directory. The store check uses a temporary journal and reads the local Steam index without opening games. Benchmarks use only synthetic libraries. `python3 scripts/native-smoke.py --keyboard` is an opt-in desktop check that moves focus and edits only demo notes. During development, `omarchy restart shell` clears stale loaded QML if a normal plugin rescan retains an earlier component. See [architecture](docs/architecture.md) and [validation](docs/validation.md).
 
 MIT licensed. Sidequest's source, demo names, procedural artwork, and preview are original. Steam artwork stays on the user's machine and belongs to its respective owners. Sidequest is an independent community plugin, unaffiliated with Valve or the Omarchy project.

@@ -35,7 +35,7 @@ class QuestError(Exception):
 def clean_text(value, limit):
     if not isinstance(value, str):
         return ""
-    return "".join(c for c in value if c in "\n\t" or not unicodedata.category(c).startswith("C"))[:limit]
+    return "".join(c for c in value if c in "\n\t\u200c\u200d" or not unicodedata.category(c).startswith("C"))[:limit]
 
 
 def number(value, default=0):

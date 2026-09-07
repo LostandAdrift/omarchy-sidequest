@@ -12,6 +12,27 @@ var gold = "#f2cd8a";
 function emptyLibrary() {
     return {games:[], libraries:0, toolsHidden:0, notReady:0, warnings:[], scanMs:0};
 }
+function limitText(value, limit) {
+    var text=String(value || ""), count=0, end=0;
+    while(end<text.length && count<limit){
+        var first=text.charCodeAt(end++);
+        if(first>=0xd800 && first<=0xdbff && end<text.length){
+            var next=text.charCodeAt(end);
+            if(next>=0xdc00 && next<=0xdfff)end++;
+        }
+        count++;
+    }
+    return text.slice(0,end);
+}
+function characterCount(value) {
+    var text=String(value || ""),count=0;
+    for(var i=0;i<text.length;i++){
+        var first=text.charCodeAt(i),next=text.charCodeAt(i+1);
+        if(first>=0xd800 && first<=0xdbff && next>=0xdc00 && next<=0xdfff)i++;
+        count++;
+    }
+    return count;
+}
 function normalize(value) {
     return String(value || "").toLowerCase().replace(/[^a-z0-9\u0080-\uffff]+/g, " ").trim();
 }
@@ -29,19 +50,22 @@ function score(name, query) {
     return total;
 }
 function filter(games, query, mode) {
-    return games.filter(function(g){
-        if(mode==="hidden")return g.hidden && score(g.name,query)>0;
-        if(g.hidden)return false;
-        if(mode==="favorites" && !g.favorite)return false;
-        if(mode==="notes" && !g.note)return false;
-        if(["quick","deep","party"].indexOf(mode)>=0 && g.mood!==mode)return false;
-        return score(g.name,query)>0;
-    }).sort(function(a,b){
-        var delta=score(b.name,query)-score(a.name,query);
+    var matches=[];
+    games.forEach(function(g){
+        if(mode==="hidden" ? !g.hidden : g.hidden)return;
+        if(mode==="favorites" && !g.favorite)return;
+        if(mode==="notes" && !g.note)return;
+        if(["quick","deep","party"].indexOf(mode)>=0 && g.mood!==mode)return;
+        var rank=score(g.name,query);
+        if(rank>0)matches.push({game:g,rank:rank});
+    });
+    // Score once per game, rather than repeatedly during sort comparisons.
+    return matches.sort(function(left,right){
+        var a=left.game,b=right.game,delta=right.rank-left.rank;
         if(delta)return delta;
         if(a.favorite!==b.favorite)return a.favorite?-1:1;
         return a.name.localeCompare(b.name);
-    });
+    }).map(function(entry){return entry.game;});
 }
 function byId(games,id) {for(var i=0;i<games.length;i++)if(games[i].id===id)return games[i];return null;}
 function sizeLabel(bytes) {
