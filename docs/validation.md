@@ -16,7 +16,9 @@ Native checks passed on three displays, including a rotated portrait display at 
 
 The local Steam index recognized all four installed games and filtered five runtime/support packages. Native screenshots were cropped to the fictional demo panel and inspected locally. Public assets use only the portable synthetic demo; no real library data or game artwork is included.
 
-Disabling and re-enabling the plugin passed. During development, Omarchy retained an earlier QML component after a git update; restarting the shell loaded the updated component. This did not affect running applications. Fresh-install/removal checks are recorded with the release acceptance results.
+Disabling and re-enabling the plugin passed. Standard `omarchy plugin remove --yes` removed the installed source, and a fresh `omarchy plugin add` from the public GitHub repository succeeded. The private journal was unchanged across removal/reinstallation. The full native suite passed again on the freshly installed production-code candidate (`1c3e6bd`), with zero Sidequest-specific warnings in the shell log. All three panels finished closed, demo off, with no helper running.
+
+During development, Omarchy retained an earlier QML component after a git update; restarting the shell loaded the updated component. This did not affect running applications. Lock-close bindings were inspected; the desktop was not physically locked during unattended acceptance.
 
 No real game was launched as an unattended test. The real process-launch integration check used a temporary `steam` executable and verified that it received exactly the expected numeric game URI.
 
@@ -31,6 +33,8 @@ These are local measurements, not universal timing guarantees. The synthetic fix
 
 The 1,000-game helper's measured p95 was 59.20 ms. The 4,000-game helper's maximum was 155.94 ms. Reproduce with `python3 scripts/benchmark.py`.
 
-A separate 30-scan sample of the small installed library measured 2.12 ms median within the same Python process. Native summon-to-ready measured 136.46 ms median across three displays, including shell IPC and asynchronous helper startup; this is a small smoke-test sample, not a frame-time benchmark.
+A separate 30-scan sample of the small installed library measured 2.12 ms median within the same Python process. The final native summon-to-ready check measured 127.99 ms median across three displays, including shell IPC and asynchronous helper startup; this is a small smoke-test sample, not a frame-time benchmark.
+
+The production-code candidate passed [GitHub CI](https://github.com/LostandAdrift/omarchy-sidequest/actions/runs/34168603218), including Python, JavaScript, and offscreen QtQuick behavior checks.
 
 Search is in-memory, the list virtualizes rows, and cached artwork decodes asynchronously at a bounded requested size. Closed panels perform no polling or animation. The production plugin starts no service or persistent observer.
