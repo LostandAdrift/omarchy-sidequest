@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import stat
 import tempfile
+import time
 import unittest
 from unittest.mock import patch
 
@@ -131,6 +132,13 @@ class LibraryTests(unittest.TestCase):
         game = self.scan()["games"][0]
         self.assertEqual(game["bytes"], 0); self.assertEqual(game["lastPlayed"], 0)
 
+    def test_unreadable_artwork_does_not_hide_game(self):
+        self.add(); (self.root / "appcache/librarycache/123").mkdir(parents=True)
+        with patch.object(Path, "iterdir", side_effect=PermissionError("fixture")):
+            result = self.scan()
+        self.assertEqual(len(result["games"]), 1)
+        self.assertEqual(result["games"][0]["cover"], "")
+
     def test_no_steam_is_a_valid_empty_library(self):
         self.assertEqual(sq.scan_library([])["games"], [])
 
@@ -231,6 +239,26 @@ class JournalTests(unittest.TestCase):
         with patch.object(sq.subprocess, "Popen") as proc, self.assertRaises(sq.QuestError):
             sq.launch_game({"id": "1;touch /tmp/pwn"})
         proc.assert_not_called()
+
+    def test_real_process_launch_handoff_to_isolated_steam_stub(self):
+        # Exercise the real Popen path without launching Steam or a real game.
+        folder = Path(self.temp.name) / "bin"; folder.mkdir()
+        receipt = Path(self.temp.name) / "receipt.json"
+        stub = folder / "steam"
+        stub.write_text(f'#!{os.sys.executable}\nimport json,sys\nfrom pathlib import Path\nPath({str(receipt)!r}).write_text(json.dumps(sys.argv[1:]))\n')
+        stub.chmod(0o700)
+        children = []
+        actual_popen = sq.subprocess.Popen
+        def launch_stub(*args, **kwargs):
+            child = actual_popen(*args, **kwargs); children.append(child); return child
+        with patch.dict(os.environ, {"PATH": str(folder)}), patch.object(sq.subprocess, "Popen", side_effect=launch_stub):
+            sq.handle({"action": "launch", "id": "1"}, self.journal, self.scanner, sq.launch_game)
+        deadline = time.monotonic() + 3
+        while not receipt.exists() and time.monotonic() < deadline:
+            time.sleep(.01)
+        self.assertEqual(json.loads(receipt.read_text()), ["steam://rungameid/1"])
+        for child in children:
+            child.wait(timeout=3)
 
     def test_unknown_action_rejected(self):
         with self.assertRaises(sq.QuestError):

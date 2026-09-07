@@ -147,10 +147,13 @@ def cover_for(root, appid):
                   cache / appid / "library_600x900.jpg", cache / appid / "library_600x900_2x.jpg"]
     # Current Steam nests known artwork names under a content-hash directory.
     game_cache = cache / appid
-    if game_cache.is_dir():
-        for directory in sorted(game_cache.iterdir())[:32]:
+    try:
+        directories = sorted(game_cache.iterdir())[:32] if game_cache.is_dir() else []
+        for directory in directories:
             if directory.is_dir() and re.fullmatch(r"[a-fA-F0-9]{40,64}", directory.name):
                 candidates.extend([directory / "library_600x900.jpg", directory / "library_600x900_2x.jpg", directory / "library_capsule.jpg"])
+    except OSError:
+        pass  # Artwork must never make an otherwise installed game disappear.
     for candidate in candidates:
         try:
             resolved = candidate.resolve()
