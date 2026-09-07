@@ -28,7 +28,7 @@ Ui.Panel {
 
     function instances() {return bar && typeof bar.moduleWidgets==="function"?bar.moduleWidgets(moduleName):[root];}
     function activeInstance(){var all=instances();for(var i=0;i<all.length;i++)if(all[i].opened)return all[i];return root;}
-    function state(){return {opened:opened,demo:demo,ready:Local.Library.ready,busy:Local.Library.busy,running:Local.Library.running,error:Local.Library.error,requests:Local.Library.requests,games:view.library.games.length,selected:view.selectedId,dirty:view.dirty,rolling:view.rolling,locked:locked,screen:hasScreen?button.QsWindow.window.screen.name:"",scanMs:view.library.scanMs};}
+    function state(){return {opened:opened,demo:demo,ready:Local.Library.ready,busy:Local.Library.busy,running:Local.Library.running,error:Local.Library.error,requests:Local.Library.requests,games:view.library.games.length,selected:view.selectedId,dirty:view.dirty,rolling:view.rolling,locked:locked,screen:hasScreen?button.QsWindow.window.screen.name:"",scanMs:view.library.scanMs,panel:{x:panel.cardOrigin.x,y:panel.cardOrigin.y,width:panel.contentWidth,height:panel.contentHeight}};}
     function toggleDemo(){demo=!demo;demoStatus="";if(opened && !demo)Local.Library.request({action:"scan"});}
     function act(payload) {
         if(locked || !opened)return;

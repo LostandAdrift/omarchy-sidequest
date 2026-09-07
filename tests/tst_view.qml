@@ -99,4 +99,19 @@ TestCase {
     function test_help_escape_does_not_close_panel(){
         subject.helpOpen=true;keyClick(Qt.Key_Escape);compare(subject.helpOpen,false);compare(closeSpy.count,0);
     }
+    function test_help_blocks_game_shortcuts(){
+        subject.helpOpen=true;wait(10);keyClick(Qt.Key_R);keyClick(Qt.Key_N);keyClick(Qt.Key_F);
+        compare(rollSpy.count,0);compare(favoriteSpy.count,0);compare(launchSpy.count,0);
+    }
+    function test_demo_switch_preserves_separate_draft_sets(){
+        var id=subject.selectedId;
+        findChild(subject,"questNote").text="Demo draft";
+        subject.demo=false;subject.selectGame(id);findChild(subject,"questNote").text="Live draft";
+        subject.demo=true;subject.selectGame(id);compare(subject.draftNote,"Demo draft");
+        subject.demo=false;subject.selectGame(id);compare(subject.draftNote,"Live draft");
+    }
+    function test_note_markup_is_literal(){
+        var note=findChild(subject,"questNote");note.text="<b>Remember this</b>";
+        compare(note.textFormat,TextEdit.PlainText);compare(subject.draftNote,"<b>Remember this</b>");
+    }
 }

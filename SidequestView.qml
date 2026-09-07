@@ -20,6 +20,8 @@ FocusScope {
     property string draftNote:""
     property string draftMood:"any"
     property var drafts:({})
+    property var savedDraftSets:({live:{},demo:{}})
+    property bool previousDemo:false
     property bool rolling:false
     property bool helpOpen:false
     property real now:Date.now()
@@ -84,7 +86,12 @@ FocusScope {
         if(index>=0)gamesList.positionViewAtIndex(index,ListView.Contain);
     }
     function resetView() {
-        drafts={};selectedId="";draftNote="";draftMood="any";search.text="";mode="all";
+        rememberDraft();
+        var sets=Object.assign({},savedDraftSets);
+        sets[previousDemo?"demo":"live"]=drafts;
+        savedDraftSets=sets;previousDemo=demo;
+        drafts=sets[demo?"demo":"live"] || {};
+        selectedId="";draftNote="";draftMood="any";search.text="";mode="all";
         reconcile();
     }
     onFilteredChanged:reconcile()
