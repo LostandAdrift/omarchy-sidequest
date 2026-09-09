@@ -77,6 +77,8 @@ omarchy plugin remove io.github.lostandadrift.sidequest --yes
 
 Removal leaves your private journal intact. To erase your notes too, delete the `omarchy-sidequest` directory from your user state folder. No system service, autostart entry, keybinding, or package needs cleanup.
 
+[Read the agent-assisted delivery case study](docs/delivery.md).
+
 ## Development
 
 ```sh
